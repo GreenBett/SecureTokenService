@@ -26,13 +26,13 @@ namespace STS
         {
             return new List<Client>
             {                
-                //new Client
-                //{
-                //    ClientId = "client",
-                //    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                //    ClientSecrets = { new Secret("secret".Sha256()) },
-                //    AllowedScopes = { "api1" }
-                //},
+                new Client
+                {
+                    ClientId = "client",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AllowedScopes = { "api1" }
+                },
                 new Client
                 {
                     ClientId = "angular_spa",
