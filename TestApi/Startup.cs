@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using IdentityServer4.AccessTokenValidation;
 
 namespace TestApi
 {
@@ -26,14 +27,13 @@ namespace TestApi
         {
             services.AddMvc();
 
-            // See JWT Bearer Authentication in: https://docs.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x
-            // Change this to use the IdentityServer flavor of authenticating JWTs when it is available
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options => {
-                        options.Audience = "api1";
-                        options.Authority = "http://localhost:5000/";
-                        options.RequireHttpsMetadata = false;
-                    });
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.ApiName = "api1";
+                    options.Authority = "http://localhost:5000/";
+                    options.RequireHttpsMetadata = false; // Change this when outside of development when we are using HTTPS
+                });
 
         }
 
@@ -45,8 +45,8 @@ namespace TestApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
-
+            app.UseAuthentication();            
+            
             app.UseMvc();
         }
     }
