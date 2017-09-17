@@ -43,7 +43,8 @@ namespace STS
                     PostLogoutRedirectUris = new List<string> {"http://localhost:4200/"},
                     AllowedCorsOrigins = new List<string> {"http://localhost:4200"},
                     AllowAccessTokensViaBrowser = true,
-                    RequireConsent = false
+                    RequireConsent = false,
+                    AccessTokenLifetime = 120 // Timeout after 2 minutes.  3600 secs = 1 hr is the default when not specified
                 }
             };
         }
