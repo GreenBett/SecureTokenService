@@ -61,7 +61,7 @@ namespace STS.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -73,6 +73,8 @@ namespace STS.Controllers
                 }
                 if (result.IsLockedOut)
                 {
+                    // mpp - Could send email to notify us that this user has been locked out
+                    // mpp - If seen multiple times, then perhaps we can do something about it
                     _logger.LogWarning("User account locked out.");
                     return RedirectToAction(nameof(Lockout));
                 }

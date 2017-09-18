@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +27,9 @@ namespace STS
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders()
-                .AddIdentityServer(); // Needed!!!
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders()
+            .AddIdentityServer(); // Needed!!!
 
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential() // for development only
@@ -36,8 +37,22 @@ namespace STS
                                                  // azure - upload pfx file via the portal settings
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApiResources()) // Wires up IResourceStore
-                .AddInMemoryClients(Config.GetClients())  // Wires up IClientStore
+                .AddInMemoryClients(Config.GetClients())  // Wires up IClientStore                
                 .AddAspNetIdentity<ApplicationUser>();
+
+            services.Configure<PasswordHasherOptions>(options =>
+            {
+                options.IterationCount = 20000; // default is 10000
+            });
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Lockout.MaxFailedAccessAttempts = 5; // 5 is the default
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // 5 minutes is the default time as to how long the user is locked out
+                options.Lockout.AllowedForNewUsers = true;
+                //options.Password.RequiredLength = 10; // mpp - This doesn't seem to work.  Not sure why? In RegisterViewModel, it has hard-coded MinimumLength = 6
+            });
+
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -61,7 +76,7 @@ namespace STS
 
             app.UseStaticFiles();
 
-            //app.UseAuthentication();  Should not use when using app.UseIdentityServer()          
+            //app.UseAuthentication();  Should not use when using app.UseIdentityServer()            
 
             app.UseIdentityServer();
 
