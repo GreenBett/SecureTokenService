@@ -223,6 +223,11 @@ namespace STS.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                // mpp - Example of adding a new claim
+                //var addClaimResult = await _userManager.AddClaimAsync(user, new Claim("name", "Mark Petronack"));
+                // validate addClaimResult succeeded similar to the result validation with _userManager.CreateAsync below
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

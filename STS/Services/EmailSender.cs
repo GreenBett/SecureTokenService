@@ -11,6 +11,7 @@ namespace STS.Services
     {
         public Task SendEmailAsync(string email, string subject, string message)
         {
+            // mpp - Need to implement this with some kind of email code
             return Task.CompletedTask;
         }
     }

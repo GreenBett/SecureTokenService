@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +16,7 @@ namespace STS
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;      
         }
 
         public IConfiguration Configuration { get; }
@@ -51,8 +52,15 @@ namespace STS
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // 5 minutes is the default time as to how long the user is locked out
                 options.Lockout.AllowedForNewUsers = true;
                 //options.Password.RequiredLength = 10; // mpp - This doesn't seem to work.  Not sure why? In RegisterViewModel, it has hard-coded MinimumLength = 6
+                //options.SignIn.RequireConfirmedEmail = true; // mpp - make this true after implementing EmailSender.  Changes needed in AccountController as well (see minute 53 from video from Brock Allen: https://vimeo.com/172009501)
             });
 
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration["google:ClientId"];
+                    options.ClientSecret = Configuration["google:ClientSecret"];
+                });
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -65,6 +73,10 @@ namespace STS
         {
             if (env.IsDevelopment())
             {
+                // For secrets config, see: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?tabs=visual-studio#security-app-secrets
+                var builder = new ConfigurationBuilder();
+                builder.AddUserSecrets<Startup>();
+
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
