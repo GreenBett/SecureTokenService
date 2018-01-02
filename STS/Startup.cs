@@ -29,9 +29,9 @@ namespace STS
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders()
-            .AddIdentityServer(); // Needed!!!
+            .AddDefaultTokenProviders();
 
+            // Make sure AddIdentityServer happens after AddIdentity as AddIdentityServer overrides some registrations
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential() // for development only
                                                  // .AddSigningCredential("CN=sts") // Cert name is sts if that is in your certificate store.  Use AddSigningCredential with self signed cert instead of AddDeveloperSigningCredential 
